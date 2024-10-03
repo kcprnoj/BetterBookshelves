@@ -19,9 +19,9 @@ public class YACLImpl {
                         .text(Text.literal("The type of search to use when searching for blocks"),
                                 Text.literal("Disabled if Text Preview is not \"ON\""))
                         .image(
-                                option >= 15 ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/large.png") :
-                                option >= 10 ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/on.png") :
-                                        new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/small.png"),
+                                option >= 15 ? Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/large.png") :
+                                option >= 10 ? Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/on.png") :
+                                        Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/small.png"),
                                 3840,
                                 1940)
                         .build())
@@ -41,7 +41,7 @@ public class YACLImpl {
                                         .name(Text.literal("Per Book Texture"))
                                         .description(option -> OptionDescription.createBuilder()
                                                 .text(Text.literal("Enable to use a different texture for each book rather than each slot"))
-                                                .image(option ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/per_book.png") : new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/per_slot.png"),
+                                                .image(option ? Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/per_book.png") : Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/per_slot.png"),
                                                         3840,
                                                         1940)
                                                 .build())
@@ -53,9 +53,9 @@ public class YACLImpl {
                                         .description(option -> OptionDescription.createBuilder()
                                                 .text(Text.literal("The type of text preview to use"))
                                                 .image(
-                                                        option == Config.TextPreview.ON ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/on.png") :
-                                                        option == Config.TextPreview.UNDER_CROSSHAIR ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/under_crosshair.png") :
-                                                                new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/per_book.png"),
+                                                        option == Config.TextPreview.ON ? Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/on.png") :
+                                                        option == Config.TextPreview.UNDER_CROSSHAIR ? Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/under_crosshair.png") :
+                                                                Identifier.of(BetterBookshelves.MOD_ID, "config/screenshots/per_book.png"),
                                                         3840,
                                                         1940
                                                 )
