@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class Networking {
@@ -16,9 +15,8 @@ public class Networking {
         waitForServer(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBlockPos(pos);
-
             for(ServerPlayerEntity player: BetterBookshelves.SERVER.getPlayerManager().getPlayerList()) {
-                ServerPlayNetworking.send(player, new Identifier(BetterBookshelves.MOD_ID, "update_block"), buf);
+                ServerPlayNetworking.send(player, new BlockUpdatePayload(pos));
             }
         });
     }

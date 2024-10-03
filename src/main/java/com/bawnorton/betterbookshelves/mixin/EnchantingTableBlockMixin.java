@@ -27,22 +27,26 @@ public abstract class EnchantingTableBlockMixin {
         if(isChiseledBookshelf) {
             Direction facing = blockState.get(Properties.HORIZONTAL_FACING);
             BlockPos chiseledBookshelfPos = tablePos.add(bookshelfOffset);
-            int deltaZ = chiseledBookshelfPos.getZ() - tablePos.getZ();
-            int deltaX = chiseledBookshelfPos.getX() - tablePos.getX();
-            int deltaY = chiseledBookshelfPos.getY() - tablePos.getY();
-            boolean validFacing = switch (facing) {
-                case DOWN, UP -> false;
-                case NORTH -> deltaZ == 2 && Math.abs(deltaX) <= 1;
-                case SOUTH -> deltaZ == -2 && Math.abs(deltaX) <= 1;
-                case EAST -> deltaX == -2 && Math.abs(deltaZ) <= 1;
-                case WEST -> deltaX == 2 && Math.abs(deltaZ) <= 1;
-            } && deltaY <= 1 && deltaY >= 0;
+            boolean validFacing = isValidFacing(tablePos, chiseledBookshelfPos, facing);
             BlockEntity blockEntity = world.getBlockEntity(chiseledBookshelfPos);
             if(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity) {
-                int numBooks = chiseledBookshelfBlockEntity.getOpenSlotCount();
+                int numBooks = ChiseledBookshelfBlockEntity.MAX_BOOKS - chiseledBookshelfBlockEntity.getFilledSlotCount();
                 boolean hasEnoughBooks = numBooks >= ServerConfig.getInstance().enchantingTableBookRequirement;
                 cir.setReturnValue(validFacing && hasEnoughBooks);
             }
         }
+    }
+
+    private static boolean isValidFacing(BlockPos tablePos, BlockPos chiseledBookshelfPos, Direction facing) {
+        int deltaZ = chiseledBookshelfPos.getZ() - tablePos.getZ();
+        int deltaX = chiseledBookshelfPos.getX() - tablePos.getX();
+        int deltaY = chiseledBookshelfPos.getY() - tablePos.getY();
+        return switch (facing) {
+            case DOWN, UP -> false;
+            case NORTH -> deltaZ == 2 && Math.abs(deltaX) <= 1;
+            case SOUTH -> deltaZ == -2 && Math.abs(deltaX) <= 1;
+            case EAST -> deltaX == -2 && Math.abs(deltaZ) <= 1;
+            case WEST -> deltaX == 2 && Math.abs(deltaZ) <= 1;
+        } && deltaY <= 1 && deltaY >= 0;
     }
 }

@@ -19,6 +19,10 @@ import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,6 +30,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
@@ -164,11 +169,15 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             int model = texture.model;
             int decimal = texture.getDecimal() - 0xFFFFFF - 1;
             if(texture.type == Config.BookType.ENCHANTED_BOOK) {
-                NbtList enchantmentNbt = EnchantedBookItem.getEnchantmentNbt(stack);
-                if(enchantmentNbt.isEmpty()) continue;
-                NbtElement first = enchantmentNbt.get(0);
-                if (first instanceof NbtCompound compound) {
-                    String enchantment = compound.getString("id");
+                ItemEnchantmentsComponent enchantmentsComponent = stack.get(DataComponentTypes.ENCHANTMENTS);
+
+                if(enchantmentsComponent == null || enchantmentsComponent.isEmpty())
+                    continue;
+
+                Optional<RegistryEntry<Enchantment>> first = enchantmentsComponent.getEnchantments().stream().findFirst();
+
+                if (first.isPresent()) {
+                    String enchantment = first.get().getIdAsString();
                     Config.EnchantedTexture enchantedTexture = ConfigManager.getEnchantedTexture(enchantment);
                     decimal = enchantedTexture.getDecimal() - 0xFFFFFF - 1;
                     model = enchantedTexture.getModel();
@@ -207,7 +216,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         if(renderer == null) return;
         QuadEmitter emitter = context.getEmitter();
-        NbtCompound tag = stack.getNbt();
+        NbtComponent blockEntityTag = stack.get(DataComponentTypes.BLOCK_ENTITY_DATA);
         for(Direction dir : Direction.values()) {
             switch (dir) {
                 case UP, DOWN -> {
@@ -231,10 +240,9 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             }
         }
 
-        if(tag != null && tag.contains("BlockEntityTag")) {
-            NbtCompound blockEntityTag = tag.getCompound("BlockEntityTag");
+        if(blockEntityTag != null) {
             if(blockEntityTag.contains("Items")) {
-                NbtList items = blockEntityTag.getList("Items", NbtElement.COMPOUND_TYPE);
+                NbtList items = blockEntityTag.copyNbt().getList("Items", NbtElement.COMPOUND_TYPE);
                 for(NbtElement item: items) {
                     emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
                     String nbtString = item.asString();

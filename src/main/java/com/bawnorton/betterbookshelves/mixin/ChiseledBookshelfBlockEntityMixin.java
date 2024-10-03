@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +35,8 @@ public abstract class ChiseledBookshelfBlockEntityMixin extends BlockEntity {
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        NbtCompound nbt = Inventories.writeNbt(new NbtCompound(), inventory, true);
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        NbtCompound nbt = Inventories.writeNbt(new NbtCompound(), inventory, registryLookup);
         nbt.putInt("last_interacted_slot", lastInteractedSlot);
         Networking.sendUpdatePacket(pos);
         return nbt;
